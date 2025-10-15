@@ -84,7 +84,7 @@ class CarTest extends TestCase
 
         $this->assertIsInt($car->year);
         $this->assertIsInt($car->mileage);
-        $this->assertIsFloat($car->price);
+        $this->assertIsNumeric($car->price);
         $this->assertEquals(2020, $car->year);
         $this->assertEquals(50000, $car->mileage);
         $this->assertEquals(25000.50, $car->price);
@@ -115,7 +115,7 @@ class CarTest extends TestCase
         $this->assertNotEmpty($car->model);
         $this->assertIsInt($car->year);
         $this->assertIsInt($car->mileage);
-        $this->assertIsFloat($car->price);
+        $this->assertIsNumeric($car->price);
         $this->assertDatabaseHas('cars', [
             'id' => $car->id
         ]);

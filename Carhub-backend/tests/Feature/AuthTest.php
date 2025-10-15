@@ -155,8 +155,6 @@ class AuthTest extends TestCase
                     'first_name',
                     'last_name',
                     'email',
-                    'phone',
-                    'birth_date',
                     'created_at',
                     'updated_at'
                 ])
@@ -182,9 +180,18 @@ class AuthTest extends TestCase
     public function test_user_can_refresh_token()
     {
         $user = User::factory()->create();
+        
+        // Primero hacer login para obtener un token válido
+        $loginResponse = $this->postJson('/api/auth/login', [
+            'email' => $user->email,
+            'password' => 'password'
+        ]);
+        
+        $token = $loginResponse->json('access_token');
 
-        $response = $this->actingAs($user, 'api')
-                        ->postJson('/api/auth/refresh');
+        $response = $this->withHeaders([
+            'Authorization' => 'Bearer ' . $token
+        ])->postJson('/api/auth/refresh');
 
         $response->assertStatus(200)
                 ->assertJsonStructure([

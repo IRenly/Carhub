@@ -161,6 +161,9 @@ class CarApiTest extends TestCase
      */
     public function test_endpoints_require_authentication()
     {
+        // Asegurar que no hay usuario autenticado
+        auth()->logout();
+        
         $response = $this->getJson('/api/cars');
         $response->assertStatus(401);
 

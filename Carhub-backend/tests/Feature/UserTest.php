@@ -48,7 +48,8 @@ class UserTest extends TestCase
             'email',
             'password',
             'phone',
-            'birth_date'
+            'birth_date',
+            'role'
         ];
 
         $user = new User();
