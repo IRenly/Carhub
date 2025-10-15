@@ -12,11 +12,19 @@ class CarController extends Controller
 {
     /**
      * Display a listing of the user's cars.
+     * Admins see all cars, regular users see only their own cars.
      */
     public function index(): JsonResponse
     {
         $user = auth()->user();
-        $cars = $user->cars()->orderBy('created_at', 'desc')->get();
+        
+        // Si es admin, mostrar todos los autos
+        if ($user->isAdmin()) {
+            $cars = Car::with('user')->orderBy('created_at', 'desc')->get();
+        } else {
+            // Si es usuario regular, mostrar solo sus autos
+            $cars = $user->cars()->orderBy('created_at', 'desc')->get();
+        }
 
         return response()->json([
             'success' => true,
@@ -69,8 +77,10 @@ class CarController extends Controller
      */
     public function show(Car $car): JsonResponse
     {
-        // Verificar que el carro pertenece al usuario autenticado
-        if ((int)$car->user_id !== (int)auth()->id()) {
+        $user = auth()->user();
+        
+        // Si es admin, puede ver cualquier auto. Si es usuario regular, solo sus propios autos
+        if (!$user->isAdmin() && (int)$car->user_id !== (int)$user->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Car not found or access denied'
@@ -89,8 +99,10 @@ class CarController extends Controller
      */
     public function update(Request $request, Car $car): JsonResponse
     {
-        // Verificar que el carro pertenece al usuario autenticado
-        if ((int)$car->user_id !== (int)auth()->id()) {
+        $user = auth()->user();
+        
+        // Si es admin, puede editar cualquier auto. Si es usuario regular, solo sus propios autos
+        if (!$user->isAdmin() && (int)$car->user_id !== (int)$user->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Car not found or access denied'
@@ -134,8 +146,10 @@ class CarController extends Controller
      */
     public function destroy(Car $car): JsonResponse
     {
-        // Verificar que el carro pertenece al usuario autenticado
-        if ((int)$car->user_id !== (int)auth()->id()) {
+        $user = auth()->user();
+        
+        // Si es admin, puede eliminar cualquier auto. Si es usuario regular, solo sus propios autos
+        if (!$user->isAdmin() && (int)$car->user_id !== (int)$user->id) {
             return response()->json([
                 'success' => false,
                 'message' => 'Car not found or access denied'
@@ -234,11 +248,19 @@ class CarController extends Controller
 
     /**
      * Get cars statistics
+     * Admins see all cars, regular users see only their own cars
      */
     public function statistics(): JsonResponse
     {
         $user = auth()->user();
-        $cars = $user->cars();
+        
+        // Si es admin, obtener estadísticas de todos los autos
+        if ($user->isAdmin()) {
+            $cars = Car::all();
+        } else {
+            // Si es usuario regular, obtener solo sus autos
+            $cars = $user->cars;
+        }
 
         $stats = [
             'total_cars' => $cars->count(),

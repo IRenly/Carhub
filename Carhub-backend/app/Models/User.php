@@ -26,6 +26,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'phone',
         'birth_date',
+        'role',
     ];
 
     /**
@@ -48,7 +49,7 @@ class User extends Authenticatable implements JWTSubject
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'birth_date' => 'date',
+            'birth_date' => 'date:Y-m-d',
         ];
     }
 
@@ -78,5 +79,37 @@ class User extends Authenticatable implements JWTSubject
     public function cars()
     {
         return $this->hasMany(Car::class);
+    }
+
+    /**
+     * Check if user is admin
+     */
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if user is regular user
+     */
+    public function isUser()
+    {
+        return $this->role === 'user';
+    }
+
+    /**
+     * Scope to get only admin users
+     */
+    public function scopeAdmins($query)
+    {
+        return $query->where('role', 'admin');
+    }
+
+    /**
+     * Scope to get only regular users
+     */
+    public function scopeUsers($query)
+    {
+        return $query->where('role', 'user');
     }
 }
