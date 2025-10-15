@@ -1,0 +1,1377 @@
+{
+	"info": {
+		"_postman_id": "12345678-1234-1234-1234-123456789012",
+		"name": "Carhub JWT API",
+		"description": "Colección completa para probar la API JWT de Carhub - Laravel 12",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "1. Register User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    console.log('Usuario registrado exitosamente');",
+									"    pm.test('Usuario registrado correctamente', function () {",
+									"        pm.response.to.have.status(201);",
+									"    });",
+									"    ",
+									"    pm.test('Response tiene mensaje de éxito', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('message');",
+									"        pm.expect(responseJson).to.have.property('user');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Juan Pérez\",\n    \"first_name\": \"Juan\",\n    \"last_name\": \"Pérez\",\n    \"email\": \"juan@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"phone\": \"1234567890\",\n    \"birth_date\": \"1990-01-01\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Registra un nuevo usuario en el sistema"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Login exitoso');",
+									"    pm.test('Login exitoso', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response contiene token', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('access_token');",
+									"        pm.expect(responseJson).to.have.property('token_type');",
+									"        pm.expect(responseJson).to.have.property('expires_in');",
+									"        ",
+									"        // Guardar el token en una variable de entorno",
+									"        pm.environment.set('jwt_token', responseJson.access_token);",
+									"        console.log('Token guardado:', responseJson.access_token);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"juan@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Inicia sesión y obtiene un token JWT"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Get User Info (Me)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Información del usuario obtenida');",
+									"    pm.test('Información obtenida correctamente', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response contiene datos del usuario', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('id');",
+									"        pm.expect(responseJson).to.have.property('name');",
+									"        pm.expect(responseJson).to.have.property('email');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"me"
+							]
+						},
+						"description": "Obtiene la información del usuario autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Token renovado exitosamente');",
+									"    pm.test('Token renovado correctamente', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response contiene nuevo token', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('access_token');",
+									"        ",
+									"        // Actualizar el token en la variable de entorno",
+									"        pm.environment.set('jwt_token', responseJson.access_token);",
+									"        console.log('Token actualizado:', responseJson.access_token);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/refresh",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Renueva el token JWT actual"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Logout",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Logout exitoso');",
+									"    pm.test('Logout exitoso', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response contiene mensaje de logout', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('message');",
+									"        ",
+									"        // Limpiar el token de la variable de entorno",
+									"        pm.environment.unset('jwt_token');",
+									"        console.log('Token eliminado de la variable de entorno');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/logout",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						},
+						"description": "Cierra la sesión del usuario e invalida el token JWT"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints de autenticación JWT"
+		},
+		{
+			"name": "Cars API",
+			"item": [
+				{
+					"name": "1. Get All Cars",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Carros obtenidos exitosamente');",
+									"    pm.test('Carros obtenidos correctamente', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response tiene estructura correcta', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('success');",
+									"        pm.expect(responseJson).to.have.property('data');",
+									"        pm.expect(responseJson).to.have.property('message');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cars",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cars"
+							]
+						},
+						"description": "Obtiene todos los carros del usuario autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "2. Create New Car",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    console.log('Carro creado exitosamente');",
+									"    pm.test('Carro creado correctamente', function () {",
+									"        pm.response.to.have.status(201);",
+									"    });",
+									"    ",
+									"    pm.test('Response tiene estructura correcta', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('success');",
+									"        pm.expect(responseJson).to.have.property('data');",
+									"        pm.expect(responseJson).to.have.property('message');",
+									"    });",
+									"    ",
+									"    // Guardar ID del carro creado para pruebas posteriores",
+									"    const responseJson = pm.response.json();",
+									"    if (responseJson.data && responseJson.data.id) {",
+									"        pm.environment.set('created_car_id', responseJson.data.id);",
+									"        console.log('ID del carro creado guardado:', responseJson.data.id);",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"make\": \"Toyota\",\n    \"model\": \"Corolla\",\n    \"year\": 2020,\n    \"color\": \"Blue\",\n    \"license_plate\": \"ABC123\",\n    \"vin\": \"1HGBH41JXMN109186\",\n    \"mileage\": 50000,\n    \"fuel_type\": \"Gasoline\",\n    \"transmission\": \"Automatic\",\n    \"engine_size\": \"1.8L\",\n    \"description\": \"Excelente estado, un solo dueño\",\n    \"price\": 25000.00,\n    \"status\": \"available\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cars",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cars"
+							]
+						},
+						"description": "Crea un nuevo carro para el usuario autenticado"
+					},
+					"response": []
+				},
+				{
+					"name": "3. Get Specific Car",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Carro específico obtenido exitosamente');",
+									"    pm.test('Carro específico obtenido correctamente', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response tiene estructura correcta', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('success');",
+									"        pm.expect(responseJson).to.have.property('data');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cars/{{created_car_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cars",
+								"{{created_car_id}}"
+							]
+						},
+						"description": "Obtiene un carro específico por ID"
+					},
+					"response": []
+				},
+				{
+					"name": "4. Update Car",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Carro actualizado exitosamente');",
+									"    pm.test('Carro actualizado correctamente', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response tiene estructura correcta', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('success');",
+									"        pm.expect(responseJson).to.have.property('data');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"make\": \"Toyota\",\n    \"model\": \"Corolla\",\n    \"year\": 2021,\n    \"color\": \"Red\",\n    \"mileage\": 45000,\n    \"price\": 26000.00,\n    \"status\": \"available\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cars/{{created_car_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cars",
+								"{{created_car_id}}"
+							]
+						},
+						"description": "Actualiza un carro existente"
+					},
+					"response": []
+				},
+				{
+					"name": "5. Get Cars by Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Carros por estado obtenidos exitosamente');",
+									"    pm.test('Carros por estado obtenidos correctamente', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response tiene estructura correcta', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('success');",
+									"        pm.expect(responseJson).to.have.property('data');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cars/status/available",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cars",
+								"status",
+								"available"
+							]
+						},
+						"description": "Obtiene carros filtrados por estado (available, sold, maintenance, reserved)"
+					},
+					"response": []
+				},
+				{
+					"name": "6. Search Cars",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Búsqueda de carros exitosa');",
+									"    pm.test('Búsqueda de carros exitosa', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response tiene estructura correcta', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('success');",
+									"        pm.expect(responseJson).to.have.property('data');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cars/search?make=Toyota&min_price=20000&max_price=30000",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cars",
+								"search"
+							],
+							"query": [
+								{
+									"key": "make",
+									"value": "Toyota",
+									"description": "Filtrar por marca"
+								},
+								{
+									"key": "min_price",
+									"value": "20000",
+									"description": "Precio mínimo"
+								},
+								{
+									"key": "max_price",
+									"value": "30000",
+									"description": "Precio máximo"
+								}
+							]
+						},
+						"description": "Busca carros con filtros (make, model, year, color, min_price, max_price)"
+					},
+					"response": []
+				},
+				{
+					"name": "7. Get Car Statistics",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Estadísticas de carros obtenidas exitosamente');",
+									"    pm.test('Estadísticas obtenidas correctamente', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response tiene estructura correcta', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('success');",
+									"        pm.expect(responseJson).to.have.property('data');",
+									"        pm.expect(responseJson.data).to.have.property('total_cars');",
+									"        pm.expect(responseJson.data).to.have.property('cars_by_status');",
+									"        pm.expect(responseJson.data).to.have.property('average_price');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cars/statistics",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cars",
+								"statistics"
+							]
+						},
+						"description": "Obtiene estadísticas de los carros del usuario"
+					},
+					"response": []
+				},
+				{
+					"name": "8. Bulk Update Car Status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Estado de carros actualizado masivamente');",
+									"    pm.test('Estado actualizado correctamente', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response tiene estructura correcta', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('success');",
+									"        pm.expect(responseJson).to.have.property('message');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"car_ids\": [{{created_car_id}}],\n    \"status\": \"sold\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/cars/bulk-status",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cars",
+								"bulk-status"
+							]
+						},
+						"description": "Actualiza el estado de múltiples carros a la vez"
+					},
+					"response": []
+				},
+				{
+					"name": "9. Delete Car",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    console.log('Carro eliminado exitosamente');",
+									"    pm.test('Carro eliminado correctamente', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"    ",
+									"    pm.test('Response tiene estructura correcta', function () {",
+									"        const responseJson = pm.response.json();",
+									"        pm.expect(responseJson).to.have.property('success');",
+									"        pm.expect(responseJson).to.have.property('message');",
+									"    });",
+									"    ",
+									"    // Limpiar variable de entorno",
+									"    pm.environment.unset('created_car_id');",
+									"    console.log('Variable created_car_id eliminada');",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/cars/{{created_car_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"cars",
+								"{{created_car_id}}"
+							]
+						},
+						"description": "Elimina un carro específico"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints para el manejo de carros con autenticación JWT"
+		},
+		{
+			"name": "Test Scenarios",
+			"item": [
+				{
+					"name": "Test 1: Flujo Completo",
+					"item": [
+						{
+							"name": "1.1 Register New User",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Test User\",\n    \"first_name\": \"Test\",\n    \"last_name\": \"User\",\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"phone\": \"9876543210\",\n    \"birth_date\": \"1995-05-15\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/auth/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1.2 Login with New User",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    const responseJson = pm.response.json();",
+											"    pm.environment.set('jwt_token', responseJson.access_token);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1.3 Get User Info",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwt_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/auth/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1.4 Refresh Token",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    const responseJson = pm.response.json();",
+											"    pm.environment.set('jwt_token', responseJson.access_token);",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwt_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/auth/refresh",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"refresh"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "1.5 Logout",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwt_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/auth/logout",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"logout"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Flujo completo de autenticación"
+				},
+				{
+					"name": "Test 2: Error Scenarios",
+					"item": [
+						{
+							"name": "2.1 Login with Invalid Credentials",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"invalid@example.com\",\n    \"password\": \"wrongpassword\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.2 Register with Existing Email",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Another User\",\n    \"first_name\": \"Another\",\n    \"last_name\": \"User\",\n    \"email\": \"juan@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\",\n    \"phone\": \"5555555555\",\n    \"birth_date\": \"1992-03-20\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/auth/register",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"register"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.3 Access Protected Route Without Token",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/auth/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"me"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.4 Access Protected Route with Invalid Token",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer invalid_token_here"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/auth/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"me"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Escenarios de error para probar validaciones"
+				},
+				{
+					"name": "Test 3: Complete Car Flow",
+					"item": [
+						{
+							"name": "3.1 Login for Car Tests",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    const responseJson = pm.response.json();",
+											"    pm.environment.set('jwt_token', responseJson.access_token);",
+											"    console.log('Token obtenido para pruebas de carros');",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"{{test_email}}\",\n    \"password\": \"{{test_password}}\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.2 Create Test Car",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    const responseJson = pm.response.json();",
+											"    if (responseJson.data && responseJson.data.id) {",
+											"        pm.environment.set('test_car_id', responseJson.data.id);",
+											"        console.log('Carro de prueba creado con ID:', responseJson.data.id);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwt_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"make\": \"Honda\",\n    \"model\": \"Civic\",\n    \"year\": 2019,\n    \"color\": \"Silver\",\n    \"license_plate\": \"XYZ789\",\n    \"vin\": \"2HGFC2F59KH543210\",\n    \"mileage\": 75000,\n    \"fuel_type\": \"Gasoline\",\n    \"transmission\": \"Manual\",\n    \"engine_size\": \"1.5L\",\n    \"description\": \"Carro de prueba para testing\",\n    \"price\": 22000.00,\n    \"status\": \"available\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/cars",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"cars"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3 Get All Cars",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwt_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/cars",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"cars"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.4 Get Car Statistics",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwt_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/cars/statistics",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"cars",
+										"statistics"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.5 Update Car Status",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwt_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"status\": \"sold\",\n    \"price\": 21000.00\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/cars/{{test_car_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"cars",
+										"{{test_car_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.6 Clean Up - Delete Test Car",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    pm.environment.unset('test_car_id');",
+											"    console.log('Carro de prueba eliminado y variable limpiada');",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{jwt_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/api/cars/{{test_car_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"api",
+										"cars",
+										"{{test_car_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "Flujo completo de manejo de carros"
+				}
+			],
+			"description": "Escenarios de prueba automatizados"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script global que se ejecuta antes de cada request",
+					"console.log('Ejecutando request a:', pm.request.url.toString());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Script global que se ejecuta después de cada response",
+					"console.log('Response Status:', pm.response.status);",
+					"console.log('Response Time:', pm.response.responseTime + 'ms');"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://127.0.0.1:8000",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "created_car_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "test_car_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
