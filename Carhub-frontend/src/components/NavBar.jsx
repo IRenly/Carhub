@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { Menu, X, Plus } from 'lucide-react'
+import { Menu, X, Plus, Users, Settings } from 'lucide-react'
 import { useAuth } from '../hooks/useAuth'
 import { config } from '../config/env'
 import UserDropdown from './UserDropdown'
@@ -42,6 +42,22 @@ export default function NavBar() {
                       className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors"
                     >
                       Mis Autos
+                    </Link>
+                    {user?.role === 'admin' && (
+                      <Link 
+                        to="/admin/users" 
+                        className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1"
+                      >
+                        <Users className="h-4 w-4" />
+                        <span>Usuarios</span>
+                      </Link>
+                    )}
+                    <Link 
+                      to="/settings" 
+                      className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors flex items-center space-x-1"
+                    >
+                      <Settings className="h-4 w-4" />
+                      <span>Configuración</span>
                     </Link>
                     <Link 
                       to="/cars/new" 
@@ -110,6 +126,16 @@ export default function NavBar() {
                       >
                         Mis Autos
                       </Link>
+                      {user?.role === 'admin' && (
+                        <Link 
+                          to="/admin/users" 
+                          className="text-gray-700 hover:text-blue-600 flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium transition-colors"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          <Users className="h-4 w-4" />
+                          <span>Usuarios</span>
+                        </Link>
+                      )}
                       <Link 
                         to="/cars/new" 
                         className="bg-blue-600 text-white hover:bg-blue-700 flex items-center space-x-2 px-3 py-2 rounded-md text-base font-medium"

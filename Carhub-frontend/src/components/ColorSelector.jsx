@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useState, useRef, useEffect } from 'react'
+import { ChevronDown, Check } from 'lucide-react'
 
 const COLORS = [
   { name: 'Blanco', value: 'Blanco', hex: '#FFFFFF' },
@@ -26,49 +27,82 @@ const COLORS = [
 ]
 
 export default function ColorSelector({ value, onChange, error, required = false }) {
+  const [isOpen, setIsOpen] = useState(false)
+  const dropdownRef = useRef(null)
+
+  const selectedColor = COLORS.find(color => color.value === value)
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [])
+
+  const handleColorSelect = (color) => {
+    onChange({ target: { name: 'color', value: color.value } })
+    setIsOpen(false)
+  }
+
   return (
     <div className="space-y-1">
-      <label className="block text-sm font-medium text-white mb-2">
-        Color <span className="text-red-400">{required && '*'}</span>
+      <label className="block text-sm font-medium text-gray-900 mb-2">
+        Color <span className="text-red-500">{required && '*'}</span>
       </label>
       
-      <div className="grid grid-cols-6 gap-2">
-        {COLORS.map((color) => (
-          <button
-            key={color.value}
-            type="button"
-            onClick={() => onChange({ target: { name: 'color', value: color.value } })}
-            className={`
-              relative w-full h-12 rounded-lg border-2 transition-all duration-200
-              ${value === color.value 
-                ? 'border-blue-500 ring-2 ring-blue-200' 
-                : 'border-gray-300 hover:border-gray-400'
-              }
-            `}
-            style={{ backgroundColor: color.hex }}
-            title={color.name}
-          >
-            {value === color.value && (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-                  <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-              </div>
+      <div className="relative" ref={dropdownRef}>
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 flex items-center justify-between hover:bg-gray-50 transition-colors"
+        >
+          <div className="flex items-center space-x-3">
+            {selectedColor && (
+              <div 
+                className="w-5 h-5 rounded border border-gray-300"
+                style={{ backgroundColor: selectedColor.hex }}
+              ></div>
             )}
-          </button>
-        ))}
+            <span className={selectedColor ? 'text-gray-900' : 'text-gray-500'}>
+              {selectedColor ? selectedColor.name : 'Selecciona un color'}
+            </span>
+          </div>
+          <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {isOpen && (
+          <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+            {COLORS.map((color) => (
+              <button
+                key={color.value}
+                type="button"
+                onClick={() => handleColorSelect(color)}
+                className="w-full px-3 py-2 text-left hover:bg-gray-100 flex items-center justify-between transition-colors"
+              >
+                <div className="flex items-center space-x-3">
+                  <div 
+                    className="w-5 h-5 rounded border border-gray-300"
+                    style={{ backgroundColor: color.hex }}
+                  ></div>
+                  <span className="text-gray-900">{color.name}</span>
+                </div>
+                {value === color.value && (
+                  <Check className="h-4 w-4 text-blue-600" />
+                )}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
       
-      {value && (
-        <p className="text-sm text-gray-300 mt-2">
-          Color seleccionado: <span className="font-medium">{value}</span>
-        </p>
-      )}
-      
       {error && (
-        <p className="mt-1 text-sm text-red-200">{error}</p>
+        <p className="mt-1 text-sm text-red-600">{error}</p>
       )}
     </div>
   )

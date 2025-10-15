@@ -6,8 +6,13 @@ import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
 import CarsPage from './pages/CarsPage'
 import CarFormPage from './pages/CarFormPage'
+import ProfilePage from './pages/ProfilePage'
+import SettingsPage from './pages/SettingsPage'
+import UsersAdminPage from './pages/UsersAdminPage'
+import EditUserPage from './pages/EditUserPage'
 import NavBar from './components/NavBar'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminRoute from './components/AdminRoute'
 import Background from './components/Background'
 import HomeRedirect from './components/HomeRedirect'
 
@@ -29,8 +34,12 @@ export default function App() {
             <Route path="/cars/:id/edit" element={<ProtectedRoute><CarFormPage edit /></ProtectedRoute>} />
             
             {/* Rutas adicionales para perfil y configuración */}
-            <Route path="/profile" element={<ProtectedRoute><div>Perfil (próximamente)</div></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><div>Configuración (próximamente)</div></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+            <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+            
+            {/* Rutas de administración */}
+            <Route path="/admin/users" element={<ProtectedRoute><AdminRoute><UsersAdminPage /></AdminRoute></ProtectedRoute>} />
+            <Route path="/admin/users/:id/edit" element={<ProtectedRoute><AdminRoute><EditUserPage /></AdminRoute></ProtectedRoute>} />
           </Routes>
         </div>
       </div>

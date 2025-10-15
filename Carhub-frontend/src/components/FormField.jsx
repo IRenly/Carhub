@@ -26,7 +26,7 @@ export default function FormField({
           name={name}
           type={type}
           placeholder={placeholder}
-          value={value}
+          value={value || ''}
           onChange={onChange}
           required={required}
           className={`form-input ${error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}

@@ -54,10 +54,53 @@ export default function LoginPage() {
           navigate('/dashboard')
         }, 100)
       } else {
-        setError(result.error)
+        // Mostrar error persistente para credenciales incorrectas
+        const errorMessage = result.error || 'Error de autenticación'
+        
+        // Toast persistente para errores de credenciales
+        toast.error(errorMessage, {
+          duration: 8000, // 8 segundos
+          style: {
+            background: '#dc2626',
+            color: '#fff',
+            border: '1px solid #ef4444',
+            borderRadius: '8px',
+            fontSize: '14px',
+            fontWeight: '500',
+            padding: '12px 16px',
+            boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+          },
+          iconTheme: {
+            primary: '#fff',
+            secondary: '#dc2626',
+          },
+        })
+        
+        setError(errorMessage)
       }
     } catch (err) {
-      setError('Error de conexión. Intenta de nuevo.')
+      const errorMessage = 'Error de conexión. Verifica tu conexión a internet e intenta de nuevo.'
+      
+      // Toast persistente para errores de conexión
+      toast.error(errorMessage, {
+        duration: 10000, // 10 segundos para errores de conexión
+        style: {
+          background: '#dc2626',
+          color: '#fff',
+          border: '1px solid #ef4444',
+          borderRadius: '8px',
+          fontSize: '14px',
+          fontWeight: '500',
+          padding: '12px 16px',
+          boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+        },
+        iconTheme: {
+          primary: '#fff',
+          secondary: '#dc2626',
+        },
+      })
+      
+      setError(errorMessage)
     } finally {
       setIsLoading(false)
     }
@@ -102,8 +145,13 @@ export default function LoginPage() {
             </div>
 
             {error && (
-              <div className="bg-red-500/20 border border-red-400/30 text-red-200 px-4 py-3 rounded-lg">
-                {error}
+              <div className="bg-red-500/20 border border-red-400/30 text-red-200 px-4 py-3 rounded-lg animate-pulse">
+                <div className="flex items-center">
+                  <svg className="h-5 w-5 text-red-400 mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-medium">{error}</span>
+                </div>
               </div>
             )}
 

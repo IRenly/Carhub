@@ -4,6 +4,7 @@ import toast from 'react-hot-toast'
 import { register } from '../services/auth'
 import FormField from '../components/FormField'
 import PasswordField from '../components/PasswordField'
+import PhoneInput from '../components/PhoneInput'
 import Button from '../components/Button'
 
 export default function RegisterPage() {
@@ -12,6 +13,8 @@ export default function RegisterPage() {
     first_name: '',
     last_name: '',
     email: '',
+    phone: '',
+    birth_date: '',
     password: '',
     password_confirmation: ''
   })
@@ -124,6 +127,24 @@ export default function RegisterPage() {
                 autoComplete="email"
                 required
               />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <PhoneInput
+                  value={formData.phone}
+                  onChange={handleChange}
+                  error={errors.phone?.[0]}
+                  placeholder="Número de teléfono"
+                />
+
+                <FormField
+                  label="Fecha de Nacimiento"
+                  name="birth_date"
+                  type="date"
+                  value={formData.birth_date}
+                  onChange={handleChange}
+                  error={errors.birth_date?.[0]}
+                />
+              </div>
 
               <PasswordField
                 label="Contraseña"

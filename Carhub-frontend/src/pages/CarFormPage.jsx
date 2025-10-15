@@ -149,10 +149,10 @@ export default function CarFormPage({ edit = false }) {
               <ArrowLeft className="h-6 w-6 text-white" />
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-white">
+              <h1 className="text-3xl font-bold text-black">
                 {edit ? 'Editar Auto' : 'Agregar Nuevo Auto'}
               </h1>
-              <p className="text-gray-200 mt-2">
+              <p className="text-gray-400 mt-2">
                 {edit ? 'Modifica la información del auto' : 'Completa los datos del nuevo auto'}
               </p>
             </div>
@@ -160,11 +160,11 @@ export default function CarFormPage({ edit = false }) {
         </div>
 
         {/* Formulario */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-2xl shadow-2xl border border-white/20 p-8">
+        <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Información Básica */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white border-b border-white/20 pb-2">
+              <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
                 Información Básica
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -233,7 +233,7 @@ export default function CarFormPage({ edit = false }) {
 
             {/* Información Técnica */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white border-b border-white/20 pb-2">
+              <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
                 Información Técnica
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -249,7 +249,7 @@ export default function CarFormPage({ edit = false }) {
                 />
 
                 <div className="space-y-1">
-                  <label className="block text-sm font-medium text-white mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Tipo de Combustible <span className="text-red-400">*</span>
                   </label>
                   <select
@@ -270,7 +270,7 @@ export default function CarFormPage({ edit = false }) {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="block text-sm font-medium text-white mb-1">
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
                     Transmisión <span className="text-red-400">*</span>
                   </label>
                   <select
@@ -303,7 +303,7 @@ export default function CarFormPage({ edit = false }) {
 
             {/* Información Comercial */}
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white border-b border-white/20 pb-2">
+              <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
                 Información Comercial
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -319,8 +319,8 @@ export default function CarFormPage({ edit = false }) {
                 />
 
                 <div className="space-y-1">
-                  <label className="block text-sm font-medium text-white mb-1">
-                    Estado <span className="text-red-400">*</span>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">
+                    Estado <span className="text-red-500">*</span>
                   </label>
                   <select
                     name="status"
@@ -334,13 +334,13 @@ export default function CarFormPage({ edit = false }) {
                     <option value="maintenance">Mantenimiento</option>
                   </select>
                   {errors.status?.[0] && (
-                    <p className="mt-1 text-sm text-red-200">{errors.status[0]}</p>
+                    <p className="mt-1 text-sm text-red-600">{errors.status[0]}</p>
                   )}
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="block text-sm font-medium text-white mb-1">
+                <label className="block text-sm font-medium text-gray-900 mb-1">
                   Descripción (Opcional)
                 </label>
                 <textarea
@@ -352,7 +352,7 @@ export default function CarFormPage({ edit = false }) {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 bg-white text-gray-900 resize-none"
                 />
                 {errors.description?.[0] && (
-                  <p className="mt-1 text-sm text-red-200">{errors.description[0]}</p>
+                  <p className="mt-1 text-sm text-red-600">{errors.description[0]}</p>
                 )}
               </div>
             </div>

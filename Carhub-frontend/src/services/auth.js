@@ -48,23 +48,46 @@ export function isAuthenticated() {
 export async function login(email, password) {
   try {
     const response = await api.post('/auth/login', { email, password })
-    const { access_token, user } = response.data
+    const { access_token } = response.data
     
     saveToken(access_token)
     
-    // Si no tenemos el usuario en la respuesta, lo obtenemos
-    if (!user) {
-      const userResponse = await api.post('/auth/me')
-      saveUser(userResponse.data)
-    } else {
-      saveUser(user)
-    }
+    // Siempre obtener la información completa del usuario después del login
+    const userResponse = await api.post('/auth/me')
+    saveUser(userResponse.data)
     
     return { success: true, data: response.data }
   } catch (error) {
+    // Manejar diferentes tipos de errores
+    let errorMessage = 'Error de conexión'
+    
+    if (error.response) {
+      const status = error.response.status
+      const message = error.response.data?.message || ''
+      
+      switch (status) {
+        case 401:
+          errorMessage = 'Credenciales incorrectas. Verifica tu email y contraseña.'
+          break
+        case 422:
+          errorMessage = 'Datos inválidos. Verifica que el email y contraseña sean correctos.'
+          break
+        case 429:
+          errorMessage = 'Demasiados intentos. Espera unos minutos antes de intentar nuevamente.'
+          break
+        case 500:
+          errorMessage = 'Error del servidor. Intenta más tarde.'
+          break
+        default:
+          errorMessage = message || 'Error de autenticación. Intenta nuevamente.'
+      }
+    } else if (error.request) {
+      errorMessage = 'Sin conexión a internet. Verifica tu conexión e intenta nuevamente.'
+    }
+    
     return { 
       success: false, 
-      error: error.response?.data?.message || 'Error de conexión' 
+      error: errorMessage 
     }
   }
 }

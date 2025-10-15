@@ -9,9 +9,11 @@ import { getColorHex } from '../components/ColorSelector'
 export default function DashboardPage() {
   const { user } = useAuth()
   const [stats, setStats] = useState({
-    totalCars: 0,
-    availableCars: 0,
-    maintenanceCars: 0,
+    total_cars: 0,
+    available_cars: 0,
+    maintenance_cars: 0,
+    sold_cars: 0,
+    reserved_cars: 0,
     recentCars: []
   })
   const [isLoading, setIsLoading] = useState(true)
@@ -33,12 +35,12 @@ export default function DashboardPage() {
         }))
       }
 
-      // Obtener autos recientes
+      // Obtener autos recientes (los últimos 5 agregados)
       const carsResult = await carsService.getAllCars()
       if (carsResult.success) {
         setStats(prevStats => ({
           ...prevStats,
-          recentCars: carsResult.data.slice(0, 5) // Últimos 5 autos
+          recentCars: carsResult.data.slice(0, 5) // Últimos 5 autos agregados
         }))
       }
     } catch (error) {
@@ -79,7 +81,7 @@ export default function DashboardPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Autos</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalCars}</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.total_cars}</p>
               </div>
             </div>
           </div>
@@ -91,7 +93,7 @@ export default function DashboardPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Disponibles</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.availableCars}</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.available_cars}</p>
               </div>
             </div>
           </div>
@@ -103,19 +105,19 @@ export default function DashboardPage() {
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">En Mantenimiento</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.maintenanceCars}</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.maintenance_cars}</p>
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow">
             <div className="flex items-center">
-              <div className="p-3 bg-purple-100 rounded-lg">
-                <Users className="h-6 w-6 text-purple-600" />
+              <div className="p-3 bg-red-100 rounded-lg">
+                <BarChart3 className="h-6 w-6 text-red-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Últimos Agregados</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.recentCars.length}</p>
+                <p className="text-sm font-medium text-gray-600">Vendidos</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.sold_cars}</p>
               </div>
             </div>
           </div>
@@ -151,7 +153,7 @@ export default function DashboardPage() {
           <div className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition-shadow">
             <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
               <Car className="h-5 w-5 mr-2 text-purple-600" />
-              Autos Recientes
+              {user?.role === 'admin' ? 'Últimos Autos Agregados' : 'Mis Últimos Autos'}
             </h2>
             {stats.recentCars.length > 0 ? (
               <div className="space-y-3">
@@ -190,13 +192,20 @@ export default function DashboardPage() {
             ) : (
               <div className="text-center py-8">
                 <Car className="h-12 w-12 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-600 mb-2">No tienes autos registrados aún</p>
-                <Link
-                  to="/cars/new"
-                  className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                >
-                  Agregar tu primer auto →
-                </Link>
+                <p className="text-gray-600 mb-2">
+                  {user?.role === 'admin' 
+                    ? 'No hay autos registrados en el sistema' 
+                    : 'No tienes autos registrados aún'
+                  }
+                </p>
+                {user?.role !== 'admin' && (
+                  <Link
+                    to="/cars/new"
+                    className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                  >
+                    Agregar tu primer auto →
+                  </Link>
+                )}
               </div>
             )}
           </div>
